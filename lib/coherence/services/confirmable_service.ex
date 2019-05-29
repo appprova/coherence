@@ -61,7 +61,7 @@ defmodule Coherence.ConfirmableService do
         """
         def confirm(user) do
           Schemas.change_user(user, %{
-            confirmed_at: NaiveDateTime.utc_now(),
+            confirmed_at: Config.datetime_module().utc_now(),
             confirmation_token: nil
           })
         end
@@ -80,7 +80,7 @@ defmodule Coherence.ConfirmableService do
 
           changeset =
             Schemas.change_user(user, %{
-              confirmed_at: NaiveDateTime.utc_now(),
+              confirmed_at: Config.datetime_module().utc_now(),
               confirmation_token: nil
             })
 
@@ -114,7 +114,7 @@ defmodule Coherence.ConfirmableService do
   """
   @spec confirm(Ecto.Schema.t()) :: Ecto.Changeset.t()
   def confirm(user) do
-    Schemas.change_user(user, %{confirmed_at: NaiveDateTime.utc_now(), confirmation_token: nil})
+    Schemas.change_user(user, %{confirmed_at: Config.datetime_module().utc_now(), confirmation_token: nil})
   end
 
   @doc """
@@ -127,7 +127,7 @@ defmodule Coherence.ConfirmableService do
   @spec confirm!(Ecto.Schema.t()) :: Ecto.Changeset.t() | {:error, Ecto.Changeset.t()}
   def confirm!(user) do
     changeset =
-      Schemas.change_user(user, %{confirmed_at: NaiveDateTime.utc_now(), confirmation_token: nil})
+      Schemas.change_user(user, %{confirmed_at: Config.datetime_module().utc_now(), confirmation_token: nil})
 
     if confirmed?(user) do
       changeset =

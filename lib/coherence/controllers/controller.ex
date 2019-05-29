@@ -125,13 +125,11 @@ defmodule Coherence.Controller do
       iex> ~N(2016-10-10 10:10:10)
       ...> |> Coherence.Controller.shift(days: -2)
       ...> |> to_string
-      "2016-10-08 10:10:10Z"
+      "2016-10-08 10:10:10"
   """
   @spec shift(struct, Keyword.t()) :: struct
   def shift(datetime, opts) do
     datetime
-    |> NaiveDateTime.to_erl()
-    |> Timex.to_datetime()
     |> Timex.shift(opts)
   end
 
@@ -174,7 +172,7 @@ defmodule Coherence.Controller do
       token = random_string(48)
       url = router_helpers().confirmation_url(conn, :edit, token)
       Logger.debug("confirmation email url: #{inspect(url)}")
-      dt = NaiveDateTime.utc_now()
+      dt = Config.datetime_module().utc_now()
 
       user
       |> user_schema.changeset(%{
@@ -226,7 +224,7 @@ defmodule Coherence.Controller do
   can set this data far in the future to do a pseudo permanent lock.
   """
   @spec lock!(Ecto.Schema.t(), struct) :: schema_or_error
-  def lock!(user, locked_at \\ NaiveDateTime.utc_now()) do
+  def lock!(user, locked_at \\ Config.datetime_module().utc_now()) do
     user_schema = Config.user_schema()
     changeset = user_schema.lock(user, locked_at)
 

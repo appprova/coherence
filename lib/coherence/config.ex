@@ -139,7 +139,8 @@ defmodule Coherence.Config do
     :user_schema,
     :user_token,
     {:verify_user_token, &Coherence.SessionService.verify_user_token/2},
-    :web_module
+    :web_module,
+    {:datetime_module, NaiveDateTime}
   ]
   |> Enum.each(fn
     {key, default} ->

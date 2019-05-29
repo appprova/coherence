@@ -286,7 +286,7 @@ defmodule Coherence.SessionControllerBase do
                 |> track_lock(user, user.__struct__.trackable_table?())
 
               {put_flash(new_conn, :error, Messages.backend().maximum_login_attempts_exceeded()),
-               %{locked_at: NaiveDateTime.utc_now()}}
+               %{locked_at: Config.datetime_module().utc_now()}}
 
             true ->
               {put_flash(

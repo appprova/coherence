@@ -122,7 +122,7 @@ defmodule Coherence.ConfirmationControllerBase do
                 end
                 |> Map.merge(%{
                   confirmation_token: nil,
-                  confirmed_at: NaiveDateTime.utc_now()
+                  confirmed_at: Config.datetime_module().utc_now()
                 })
 
               changeset = Controller.changeset(:confirmation, user_schema, user, attrs)

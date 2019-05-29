@@ -167,7 +167,7 @@ defmodule Coherence.PasswordControllerBase do
       def recover_password(conn, user_schema, user, params) do
         token = random_string(48)
         url = router_helpers().password_url(conn, :edit, token)
-        dt = NaiveDateTime.utc_now()
+        dt = Config.datetime_module().utc_now()
         info = Messages.backend().reset_email_sent()
 
         Config.repo().update!(

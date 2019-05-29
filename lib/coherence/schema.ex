@@ -254,7 +254,8 @@ defmodule Coherence.Schema do
 
         Returns a changeset ready for Repo.update
         """
-        def lock(user, locked_at \\ NaiveDateTime.utc_now()) do
+        def lock(user, locked_at \\ nil) do
+          locked_at = locked_at || Config.datetime_module().utc_now()
           Config.user_schema().changeset(user, %{locked_at: locked_at})
         end
 
@@ -270,7 +271,8 @@ defmodule Coherence.Schema do
         deprecated! Please use Coherence.ControllerHelpers.lock!/1.
         """
 
-        def lock!(user, locked_at \\ NaiveDateTime.utc_now()) do
+        def lock!(user, locked_at \\ nil) do
+          locked_at = locked_at || Config.datetime_module().utc_now()
           IO.warn(
             "#{inspect(Config.user_schema())}.lock!/1 has been deprecated. Please use Coherence.ControllerHelpers.lock!/1 instead."
           )
@@ -419,7 +421,8 @@ defmodule Coherence.Schema do
         end
 
   """
-  defmacro coherence_schema do
+  defmacro coherence_schema(opts \\ []) do
+    datetime_type = Keyword.get(opts, :datetime, :naive_datetime)
     quote do
       if Coherence.Config.has_option(:authenticatable) do
         field(Config.password_hash(), :string)
@@ -434,17 +437,17 @@ defmodule Coherence.Schema do
 
       if Coherence.Config.has_option(:recoverable) do
         field(:reset_password_token, :string)
-        field(:reset_password_sent_at, :naive_datetime)
+        field(:reset_password_sent_at, unquote(datetime_type))
       end
 
       if Coherence.Config.has_option(:rememberable) do
-        field(:remember_created_at, :naive_datetime)
+        field(:remember_created_at, unquote(datetime_type))
       end
 
       if Coherence.Config.has_option(:trackable) do
         field(:sign_in_count, :integer, default: 0)
-        field(:current_sign_in_at, :naive_datetime)
-        field(:last_sign_in_at, :naive_datetime)
+        field(:current_sign_in_at, unquote(datetime_type))
+        field(:last_sign_in_at, unquote(datetime_type))
         field(:current_sign_in_ip, :string)
         field(:last_sign_in_ip, :string)
       end
@@ -455,7 +458,7 @@ defmodule Coherence.Schema do
 
       if Coherence.Config.has_option(:lockable) do
         field(:failed_attempts, :integer, default: 0)
-        field(:locked_at, :naive_datetime)
+        field(:locked_at, unquote(datetime_type))
       end
 
       if Coherence.Config.has_option(:unlockable_with_token) do
@@ -464,8 +467,8 @@ defmodule Coherence.Schema do
 
       if Coherence.Config.has_option(:confirmable) do
         field(:confirmation_token, :string)
-        field(:confirmed_at, :naive_datetime)
-        field(:confirmation_sent_at, :naive_datetime)
+        field(:confirmed_at, unquote(datetime_type))
+        field(:confirmation_sent_at, unquote(datetime_type))
 
         if Coherence.Config.get(:confirm_email_updates) do
           field(:unconfirmed_email, :string)

@@ -71,7 +71,7 @@ defmodule Coherence.TrackableService do
     changeset =
       Controller.changeset(:session, user.__struct__, user, %{
         sign_in_count: user.sign_in_count + 1,
-        current_sign_in_at: NaiveDateTime.utc_now(),
+        current_sign_in_at: Config.datetime_module().utc_now(),
         current_sign_in_ip: ip,
         last_sign_in_at: last_at,
         last_sign_in_ip: last_ip
@@ -98,7 +98,7 @@ defmodule Coherence.TrackableService do
       Controller.changeset(:session, schema, schema.__struct__, %{
         action: "login",
         sign_in_count: trackable.sign_in_count + 1,
-        current_sign_in_at: NaiveDateTime.utc_now(),
+        current_sign_in_at: Config.datetime_module().utc_now(),
         current_sign_in_ip: ip,
         last_sign_in_at: last_at,
         last_sign_in_ip: last_ip,
@@ -226,7 +226,7 @@ defmodule Coherence.TrackableService do
   end
 
   defp last_at_and_ip(conn, schema) do
-    now = NaiveDateTime.utc_now()
+    now = Config.datetime_module().utc_now()
     ip = Plug.Conn.get_peer_data(conn) |> Map.get(:address) |> inspect()
 
     cond do
